@@ -3,8 +3,8 @@ const http = require('http');
 
 // Configuración del servidor de Minecraft
 const CONFIG = {
-    host: process.env.MC_HOST || 'tu-servidor.aternos.me',
-    port: parseInt(process.env.MC_PORT || '25565'),
+    host: process.env.MC_HOST || 'servidorparaamigos.seedloaf.gg',
+    port: parseInt(process.env.MC_PORT || '61126'),
     username: process.env.MC_USERNAME || 'BotCiclico',
     version: process.env.MC_VERSION || '1.20.4', // O la versión soportada por tu servidor
     auth: 'offline' // Usar modo offline para evitar "Failed to verify username!"
