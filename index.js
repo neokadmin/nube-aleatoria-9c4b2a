@@ -1,62 +1,78 @@
 const mineflayer = require('mineflayer');
 const http = require('http');
 
-// Configuración del servidor (puedes usar variables de entorno o ponerlos directo)
+// Configuración del servidor de Minecraft
 const CONFIG = {
-    host: process.env.MC_HOST || 'servidorparaamigos.seedloaf.gg',
-    port: parseInt(process.env.MC_PORT || '61126'),
-    username: process.env.MC_USERNAME || 'AlanEsGay',
-    version: process.env.MC_VERSION || '1.20.4' // Usa una versión soportada por Mineflayer
+    host: process.env.MC_HOST || 'tu-servidor.aternos.me',
+    port: parseInt(process.env.MC_PORT || '25565'),
+    username: process.env.MC_USERNAME || 'BotCiclico',
+    version: process.env.MC_VERSION || '1.20.4', // O la versión soportada por tu servidor
+    auth: 'offline' // Usar modo offline para evitar "Failed to verify username!"
 };
 
+// Contador de peticiones para seguimiento en la consola
+let pingCount = 0;
+
 function runBotCycle() {
-    console.log(`[${new Date().toLocaleTimeString()}] Intentando conectar al servidor...`);
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`\n[${timestamp}] 🔄 Intentando conectar al servidor de Minecraft (${CONFIG.host})...`);
     
     const bot = mineflayer.createBot({
         host: CONFIG.host,
         port: CONFIG.port,
         username: CONFIG.username,
-        version: CONFIG.version
+        version: CONFIG.version,
+        auth: CONFIG.auth
     });
 
     bot.once('spawn', () => {
-        console.log('¡Bot conectado con éxito! Esperando 1 minuto antes de salir...');
+        const spawnTime = new Date().toLocaleTimeString();
+        console.log(`[${spawnTime}] 🟢 ¡BOT CONECTADO CON ÉXITO! Jugador en línea: ${bot.username}`);
+        console.log(`[${spawnTime}] ⏱️ Permaneciendo en el servidor durante 1 minuto...`);
         
-        // Mantener al bot dentro exactamente 60 segundos (1 minuto)
+        // Permanecer 60 segundos dentro del juego
         setTimeout(() => {
-            console.log('Desconectando el bot (fin del minuto dentro)...');
+            const quitTime = new Date().toLocaleTimeString();
+            console.log(`[${quitTime}] 🔴 Salida programada alcanzada. Desconectando bot...`);
             bot.quit();
             scheduleReconnect();
         }, 60000);
     });
 
     bot.on('error', (err) => {
-        console.log('Error en el bot:', err.message);
+        console.log(`[${new Date().toLocaleTimeString()}] ⚠️ Error en el bot: ${err.message}`);
     });
 
     bot.on('end', (reason) => {
-        console.log(`Bot desconectado. Razón: ${reason}`);
+        console.log(`[${new Date().toLocaleTimeString()}] 🚪 Bot desconectado del servidor. Razón: ${reason}`);
     });
 }
 
 function scheduleReconnect() {
-    console.log('Esperando 1 minuto fuera del servidor para volver a entrar...');
-    // Esperar otros 60 segundos (1 minuto) antes de volver a iniciar el ciclo
+    console.log(`[${new Date().toLocaleTimeString()}] ⏳ Esperando 1 minuto fuera antes de reconectar...`);
     setTimeout(() => {
         runBotCycle();
     }, 60000);
 }
 
-// Iniciar el primer ciclo
+// Iniciar el ciclo del bot de Minecraft
 runBotCycle();
 
-// Servidor HTTP básico obligatorio para plataformas como Render (para que no marquen error de puertos)
+// Servidor HTTP preparado para UptimeRobot
 const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Bot de Minecraft activo en ciclos de 1 minuto.\n');
+    pingCount++;
+    const reqTime = new Date().toLocaleTimeString();
+    const userAgent = req.headers['user-agent'] || 'Desconocido';
+    
+    // Log visible en la terminal de Render cada vez que UptimeRobot (o un navegador) consulta el servicio
+    console.log(`[${reqTime}] 🌐 [PING #${pingCount}] Solicitud HTTP recibida de: ${userAgent}`);
+
+    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end(`Bot de Minecraft activo.\nPeticiones recibidas: ${pingCount}\nÚltima comprobación: ${reqTime}\n`);
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
-    console.log(`Servidor HTTP escuchando en el puerto ${PORT}`);
+    console.log(`[${new Date().toLocaleTimeString()}] 🚀 Servidor HTTP escuchando en el puerto ${PORT}`);
+    console.log(`[${new Date().toLocaleTimeString()}] 🔗 Apunta tu monitor de UptimeRobot a la URL de Render para mantener el servicio activo 24/7.`);
 });
