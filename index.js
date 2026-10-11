@@ -6,7 +6,7 @@ const CONFIG = {
     host: process.env.MC_HOST || 'tu-servidor.aternos.me',
     port: parseInt(process.env.MC_PORT || '25565'),
     username: process.env.MC_USERNAME || 'BotCiclico',
-    version: process.env.MC_VERSION || false // false detecta la versión automáticamente
+    version: process.env.MC_VERSION || '26.3' // <-- Actualizado a la 26.3
 };
 
 function runBotCycle() {
