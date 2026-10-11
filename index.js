@@ -3,9 +3,9 @@ const http = require('http');
 
 // Configuración del servidor (puedes usar variables de entorno o ponerlos directo)
 const CONFIG = {
-    host: process.env.MC_HOST || 'tu-servidor.aternos.me',
-    port: parseInt(process.env.MC_PORT || '25565'),
-    username: process.env.MC_USERNAME || 'BotCiclico',
+    host: process.env.MC_HOST || 'servidorparaamigos.seedloaf.gg',
+    port: parseInt(process.env.MC_PORT || '61126'),
+    username: process.env.MC_USERNAME || 'AlanEsGay',
     version: process.env.MC_VERSION || '1.20.4' // Usa una versión soportada por Mineflayer
 };
 
